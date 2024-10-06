@@ -7,6 +7,7 @@ A comprehensive Flutter example demonstrating how to implement and use the Aweso
 - 📱 Create basic notifications with title and body
 - 🖼️ Display notifications with large icons and big pictures
 - ⏰ Schedule notifications
+- 🕑 Schedule notifications using a custom dialog
 - 🎯 Handle notification actions and responses
 - 🔄 Background task execution
 - 🎨 Customizable notification layouts
@@ -101,6 +102,13 @@ await AwesomeNotificationsHelper.createNewNotification();
 await AwesomeNotificationsHelper.scheduleNewNotification();
 ```
 
+### Scheduling Repeating Notifications
+
+```dart
+
+await AwesomeNotificationsHelper.scheduleMinuteNotifications();
+```
+
 ### Managing Notifications
 
 ```dart
@@ -113,12 +121,15 @@ await AwesomeNotificationsHelper.cancelNotifications();
 
 ## 🏗️ Project Structure
 
-- `lib/`
-  - `app.dart`
-  - `main.dart`
-  - `home_page.dart`
-  - `notification_page.dart`
-  - `awesome_notifications_helper.dart`
+``` text
+lib/
+├── app.dart
+├── main.dart
+├── home_page.dart
+├── notification_page.dart
+├── awesome_notifications_helper.dart
+└── schedule_notification_dialog.dart
+```
 
 ## 🛠️ Core Components
 
@@ -129,9 +140,19 @@ A utility class that handles:
 - Notification initialization
 - Creation of notifications
 - Scheduling notifications
+- Scheduling notifications (including minute-based schedules)
 - Permission management
 - Action handling
 - Background task execution
+-
+
+### ScheduleNotificationDialog
+
+A dedicated widget to allow users to:
+
+- Pick a date and time for the notification
+- Toggle repeat notifications
+- Return the selected options to schedule notifications accordingly
 
 ### NotificationPage
 

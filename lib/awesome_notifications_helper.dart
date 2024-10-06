@@ -40,6 +40,17 @@ class AwesomeNotificationsHelper {
               importance: NotificationImportance.High,
               defaultColor: Colors.deepPurple,
               ledColor: Colors.deepPurple),
+          // repeat scheduled notifications
+          NotificationChannel(
+              channelKey: 'repeat',
+              channelName: 'Repeat Notifications',
+              channelDescription: 'Notification tests as repeat notifications',
+              playSound: true,
+              onlyAlertOnce: true,
+              groupAlertBehavior: GroupAlertBehavior.Children,
+              importance: NotificationImportance.High,
+              defaultColor: Colors.deepPurple,
+              ledColor: Colors.deepPurple),
         ],
         debug: true);
   }
@@ -215,20 +226,26 @@ class AwesomeNotificationsHelper {
         ]);
   }
 
-  static Future<void> scheduleNewNotification() async {
+  static Future<void> scheduleNewNotification({
+    required DateTime scheduledDateTime,
+    required String title,
+    required String message,
+    required String username,
+    required bool repeatNotification,
+  }) async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) isAllowed = await displayNotificationRationale();
     if (!isAllowed) return;
 
     await myNotifyScheduleInHours(
-        title: 'test',
-        secondsFromNow: 10,
-        msg: 'test message',
-        heroThumbUrl:
-            'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
-        hoursFromNow: 1,
-        username: 'test user',
-        repeatNotif: true);
+      scheduledDateTime: scheduledDateTime,
+      title: title,
+      msg: message,
+      heroThumbUrl:
+          'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
+      username: username,
+      repeatNotif: repeatNotification,
+    );
   }
 
   static Future<void> resetBadgeCounter() async {
@@ -238,29 +255,53 @@ class AwesomeNotificationsHelper {
   static Future<void> cancelNotifications() async {
     await AwesomeNotifications().cancelAll();
   }
+
+  static Future<void> scheduleMinuteNotifications({
+    required String title,
+    required String message,
+    required String username,
+  }) async {
+    await AwesomeNotifications().createNotification(
+      schedule: NotificationCalendar(
+        second: 5, // Fires at the start of every minute
+        repeats: true, // Repeats every minute
+      ),
+      content: NotificationContent(
+        id: -1, // Generates a unique ID for each notification
+        channelKey: 'repeat',
+        title: title,
+        body: '$username, $message',
+        notificationLayout: NotificationLayout.Default,
+      ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'NOW',
+          label: 'Now',
+        ),
+        NotificationActionButton(
+          key: 'LATER',
+          label: 'Later',
+        ),
+      ],
+    );
+  }
 }
 
 Future<void> myNotifyScheduleInHours({
-  int hoursFromNow = 0,
-  int minutesFromNow = 0,
-  int secondsFromNow = 10,
-  int daysFromNow = 0,
+  required DateTime scheduledDateTime,
   required String heroThumbUrl,
   required String username,
   required String title,
   required String msg,
   bool repeatNotif = false,
 }) async {
-  var nowDate = DateTime.now().add(Duration(
-      days: daysFromNow, hours: hoursFromNow, seconds: secondsFromNow));
   await AwesomeNotifications().createNotification(
     schedule: NotificationCalendar(
-      weekday: nowDate.day,
-      hour: nowDate.hour,
-      minute: 0,
-      second: nowDate.second,
+      weekday: scheduledDateTime.weekday,
+      hour: scheduledDateTime.hour,
+      minute: scheduledDateTime.minute,
+      second: scheduledDateTime.second,
       repeats: repeatNotif,
-      //allowWhileIdle: true,
     ),
     content: NotificationContent(
       id: -1,
@@ -269,10 +310,8 @@ Future<void> myNotifyScheduleInHours({
       body: '$username, $msg',
       bigPicture: heroThumbUrl,
       notificationLayout: NotificationLayout.BigPicture,
-      //actionType : ActionType.DismissAction,
       color: Colors.black,
       backgroundColor: Colors.black,
-      // customSound: 'resource://raw/notif',
       payload: {'actPag': 'myAct', 'actType': 'food', 'username': username},
     ),
     actionButtons: [
