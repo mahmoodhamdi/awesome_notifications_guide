@@ -36,7 +36,7 @@ class _AppState extends State<MyApp> {
     List<Route<dynamic>> pageStack = [];
     pageStack.add(MaterialPageRoute(
         builder: (_) =>
-            const MyHomePage(title: 'Awesome Notifications Example App')));
+            const MyHomePage(title: 'Awesome Notifications - Guide')));
     if (initialRouteName == routeNotification &&
         AwesomeNotificationsHelper.initialAction != null) {
       pageStack.add(MaterialPageRoute(
@@ -51,7 +51,7 @@ class _AppState extends State<MyApp> {
       case routeHome:
         return MaterialPageRoute(
             builder: (_) =>
-                const MyHomePage(title: 'Awesome Notifications Example App'));
+                const MyHomePage(title: 'Awesome Notifications - Guide'));
 
       case routeNotification:
         ReceivedAction receivedAction = settings.arguments as ReceivedAction;
@@ -64,7 +64,8 @@ class _AppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Awesome Notifications - Simple Example',
+      debugShowCheckedModeBanner: false,
+      title: 'Awesome Notifications - Guide',
       navigatorKey: MyApp.navigatorKey,
       onGenerateInitialRoutes: onGenerateInitialRoutes,
       onGenerateRoute: onGenerateRoute,

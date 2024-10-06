@@ -1,4 +1,5 @@
 import 'package:awesome_notifications_guide/awesome_notifications_helper.dart';
+import 'package:awesome_notifications_guide/schedule_notification_dialog.dart';
 import 'package:flutter/material.dart';
 
 ///  *********************************************
@@ -40,14 +41,40 @@ class _MyHomePageState extends State<MyHomePage> {
               heroTag: '1',
               onPressed: () =>
                   AwesomeNotificationsHelper.createNewNotification(),
-              tooltip: 'Create New notification',
+              tooltip: 'Create Basic notification',
               child: const Icon(Icons.outgoing_mail),
             ),
             const SizedBox(width: 10),
             FloatingActionButton(
-              heroTag: '2',
+              heroTag: '5',
               onPressed: () =>
-                  AwesomeNotificationsHelper.scheduleNewNotification(),
+                  AwesomeNotificationsHelper.scheduleMinuteNotifications(
+                title: "title",
+                message: "message",
+                username: "username",
+              ),
+              tooltip: 'Execute long task',
+              child: const Icon(Icons.timer),
+            ),
+            const SizedBox(width: 10),
+            FloatingActionButton(
+              heroTag: '2',
+              onPressed: () async {
+                final result = await showDialog(
+                  context: context,
+                  builder: (context) => const ScheduleNotificationDialog(),
+                );
+
+                if (result != null) {
+                  await AwesomeNotificationsHelper.scheduleNewNotification(
+                    scheduledDateTime: result['scheduledDateTime'],
+                    title: "title",
+                    message: "result['message']",
+                    username: "result['username']",
+                    repeatNotification: result['repeatNotification'],
+                  );
+                }
+              },
               tooltip: 'Schedule New notification',
               child: const Icon(Icons.access_time_outlined),
             ),
@@ -67,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
